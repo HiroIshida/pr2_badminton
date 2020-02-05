@@ -2,13 +2,13 @@
 (pr2-init)
 
 (defun gen-racket-coords (robot) ;; not only generate but also atach coords to pr2
-  (let ((l-list (send robot :link-list (send robot :rarm :end-coords :parent)))
+  (let* ((l-list (send robot :link-list (send robot :rarm :end-coords :parent)))
         (link-rarm-end (elt l-list 7))
         (coords-racket (make-cascoords)))
     (send coords-racket :newcoords (send link-rarm-end :copy-worldcoords))
     (send coords-racket :translate #f(180 0 300) :local)
     (send link-rarm-end :assoc coords-racket)
-    (return-from coords)))
+    coords-racket))
 (setq *coords-racket* (gen-racket-coords *pr2*))
 
 (defun transmit-av-sim-and-real (robot av &key (duration 3000))
@@ -34,7 +34,7 @@
   (speak-jp "2秒前")
   (unix:sleep 2)
   (send *ri* :angle-vector *av-post* 1000)
-  (unix:usleep 1000000)
+  (unix:usleep 500000)
   (send *ri* :stop-motion)
   (send *ri* :wait-interpolation))
 
